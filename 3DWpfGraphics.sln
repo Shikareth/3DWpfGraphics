@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DVisualization", "3DVisualization\3DVisualization.csproj", "{65769A2E-E57E-4A27-B4C8-2305B0DE7642}"
+	ProjectSection(ProjectDependencies) = postProject
+		{13CD43D6-E68A-4A0A-AB2A-19A358783FE3} = {13CD43D6-E68A-4A0A-AB2A-19A358783FE3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{13CD43D6-E68A-4A0A-AB2A-19A358783FE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65769A2E-E57E-4A27-B4C8-2305B0DE7642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65769A2E-E57E-4A27-B4C8-2305B0DE7642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65769A2E-E57E-4A27-B4C8-2305B0DE7642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65769A2E-E57E-4A27-B4C8-2305B0DE7642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13CD43D6-E68A-4A0A-AB2A-19A358783FE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13CD43D6-E68A-4A0A-AB2A-19A358783FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13CD43D6-E68A-4A0A-AB2A-19A358783FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13CD43D6-E68A-4A0A-AB2A-19A358783FE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83C303F8-E04B-40F8-9DE5-421D65389799}
+	EndGlobalSection
+EndGlobal

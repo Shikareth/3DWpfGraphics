@@ -1,0 +1,10 @@
+﻿<Application x:Class="_3DVisualization.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:_3DVisualization"
+             xmlns:cv="clr-namespace:_3DVisualization.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <cv:Vector3DToPoint3D x:Key="Vector3DToPoint3DConverter"/>
+    </Application.Resources>
+</Application>
