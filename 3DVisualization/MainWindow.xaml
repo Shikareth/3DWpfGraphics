@@ -55,7 +55,7 @@
                                            CenterY="{Binding Path=Model.WorkPlatform.Origin.y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                            CenterZ="{Binding Path=Model.WorkPlatform.Origin.z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <RotateTransform3D.Rotation>
-                                <AxisAngleRotation3D Axis="1,0,0" Angle="10"/> <!-- TODO WorkPlatform rotation binding-->
+                                <AxisAngleRotation3D Axis="1,0,0" Angle="1"/> <!-- TODO WorkPlatform rotation binding-->
                             </RotateTransform3D.Rotation>
                         </RotateTransform3D>
                     </Transform3DGroup>
