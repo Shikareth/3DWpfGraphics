@@ -68,17 +68,17 @@ namespace Tools.Math
             var sz = System.Math.Sin(az);
 
 
-            Data[0] = cy * cz;
-            Data[1] = -cx * sz + sx * sy * cz;
-            Data[2] = 
+            //Data[0] = cy * cz;
+            //Data[1] = -cx * sz + sx * sy * cz;
+            //Data[2] = 
 
-            Data[3] = iy.X;
-            Data[4] = iy.Y;
-            Data[5] = iy.Z;
+            //Data[3] = iy.X;
+            //Data[4] = iy.Y;
+            //Data[5] = iy.Z;
 
-            Data[6] = iz.X;
-            Data[7] = iz.Y;
-            Data[8] = iz.Z;
+            //Data[6] = iz.X;
+            //Data[7] = iz.Y;
+            //Data[8] = iz.Z;
 
 
 
@@ -163,6 +163,39 @@ namespace Tools.Math
             var columns = Columns;
             Columns = Rows;
             Rows = Columns;
+        }
+
+        public Matrix Minor(int row, int column)
+        {
+            double[] array = new double[(Rows - 1) * (Columns - 1)];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                int r = n / (Columns - 1);
+                int c = n % (Columns - 1);
+
+                if (r >= row) r++;
+                if (c >= column) c++;
+
+                array[n] = Data[r * Columns + c];
+            });
+
+            return new Matrix(Rows-1, Columns-1, array);
+        }
+
+        public double Det()
+        {
+
+            Parallel.For(0, Columns, (n) =>
+            {
+                int r = n / Columns;
+                int c = n % Columns;
+
+            });
+
+
+
+            return 0;
         }
 
     }

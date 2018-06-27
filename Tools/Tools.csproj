@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
     <Compile Include="Math\Matrix.cs" />
+    <Compile Include="Math\Misc.cs" />
     <Compile Include="Math\Vector2D.cs" />
     <Compile Include="Math\Vector3D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,9 +58,6 @@
     <Content Include="Images\RodriguezRotationFormula.PNG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
