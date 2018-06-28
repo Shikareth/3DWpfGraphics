@@ -10,6 +10,12 @@ namespace Tools.Math
     {
         public double X { get; set; } = 0;
         public double Y { get; set; } = 0;
+        public double[] Data
+        {
+            get {
+                return new double[2] { X, Y };
+            }
+        }
 
         public double Length
         {
@@ -105,6 +111,15 @@ namespace Tools.Math
         public static Vector2D operator ~(Vector2D v)
         {
             return new Vector2D(-v.X, -v.Y);
+        }
+
+        public override string ToString()
+        {
+            return $"|\t{X.ToString("E3")}\t{Y.ToString("E3")}\t|";
+        }
+        public string ToString(string format = "E3")
+        {
+            return $"|\t{X.ToString(format)}\t{Y.ToString(format)}\t|";
         }
     }
 }

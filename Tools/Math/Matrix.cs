@@ -54,32 +54,6 @@ namespace Tools.Math
             Data[8] = iz.Z;
         }
 
-        public Matrix(double ax, double ay, double az)
-        {
-            Data = new double[9];
-            Rows = 3;
-            Columns = 3;
-
-            var cx = System.Math.Cos(ax);
-            var sx = System.Math.Sin(ax);
-            var cy = System.Math.Cos(ay);
-            var sy = System.Math.Sin(ay);
-            var cz = System.Math.Cos(az);
-            var sz = System.Math.Sin(az);
-
-            Data[0] = cy * cz;
-            Data[1] = -cy * sz;
-            Data[2] = sy;
-
-            Data[3] = cx * sz + cz * sx * sy;
-            Data[4] = cx * cz - sx * sy * sz;
-            Data[5] = -cy * sx;
-
-            Data[6] = sx * sz - cx * cz * sy;
-            Data[7] = cz * sx + cx * sy * sz;
-            Data[8] = cx * cy;
-        }
-
         public Matrix(Vector3D ix, Vector3D iy)
         {
             Data = new double[4];
@@ -130,6 +104,309 @@ namespace Tools.Math
 
         }
 
+        /// <image url="$(ProjectDir)\Images\EulerAngles.PNG"/>
+        public static Matrix RotationMatrixXZX(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = cy;
+            data[1] = -cz * sy;
+            data[2] = sy*sz;
+
+            data[3] = cx * sy;
+            data[4] = cx * cy * cz - sx * sz;
+            data[5] = -cz * sx - cx * cy * sz;
+
+            data[6] = sx * sy;
+            data[7] = cx * sz + cy * cz * sx;
+            data[8] = cx * cz - cy * sx * sz;
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixXZY(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = cy * cz;
+            data[1] = -sy;
+            data[2] = cy * sz;
+
+            data[3] = sx * sz + cx * cz * sy;
+            data[4] = cx * cy;
+            data[5] = cx * sy * sz - cz * sx;
+
+            data[6] = cz * sx * sy - cx * sz;
+            data[7] = cy * sx;
+            data[8] = cx * cz + sx * sy * sz;
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixXYX(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = cy;
+            data[1] = sy * sz;
+            data[2] = cz * sy;
+
+            data[3] = sx * sy;
+            data[4] = cx * cz - cy * sx * sz;
+            data[5] = -cx * sz - cy * cz * sx;
+
+            data[6] = -cx * sy;
+            data[7] = cz * sx + cx * cy * sz;
+            data[8] = cx * cy * cz - sx * sz;
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixXYZ(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = cy * cz;
+            data[1] = -cy * sz;
+            data[2] = sy;
+
+            data[3] = cx * sz + cz * sx * sy;
+            data[4] = cx * cz - sx * sy * sz;
+            data[5] = -cy * sx;
+
+            data[6] = sx * sz - cx * cz * sy;
+            data[7] = cz * sx + cx * sy * sz;
+            data[8] = cx * cy;
+
+            return new Matrix(3, 3, data);
+        }
+        //TODO Rest of rotation matrices
+        public static Matrix RotationMatrixYXY(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = cx * cz - cy * sx * sz;
+            data[1] = sx * sy;
+            data[2] = cx * sz + cy * cz * sx;
+
+            data[3] = sy * sz;
+            data[4] = cy;
+            data[5] = -cz * sy;
+
+            data[6] = -cz * sx - cx * cy * sz;
+            data[7] = cx * sy;
+            data[8] = cx * cy * cz - sx * sz;
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixYXZ(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = cx * cz + sx * sy * sz;
+            data[1] = cz * sx * sy - cx * sy;
+            data[2] = cy * sx;
+
+            data[3] = cy * sz;
+            data[4] = cy * cz;
+            data[5] = -sy;
+
+            data[6] = cx * sy * sz - cz * sx;
+            data[7] = cx * cz * sy + sx * sz;
+            data[8] = cx * cy;
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixYZY(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = 
+            data[1] = 
+            data[2] = 
+
+            data[3] = 
+            data[4] = 
+            data[5] = 
+
+            data[6] = 
+            data[7] = 
+            data[8] = 
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixYZX(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = 
+            data[1] = 
+            data[2] = 
+
+            data[3] = 
+            data[4] = 
+            data[5] = 
+
+            data[6] = 
+            data[7] = 
+            data[8] = 
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixZYZ(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = 
+            data[1] = 
+            data[2] = 
+
+            data[3] = 
+            data[4] = 
+            data[5] = 
+
+            data[6] = 
+            data[7] = 
+            data[8] = 
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixZYX(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = 
+            data[1] = 
+            data[2] = 
+
+            data[3] = 
+            data[4] = 
+            data[5] = 
+
+            data[6] = 
+            data[7] = 
+            data[8] = 
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixZXZ(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = 
+            data[1] = 
+            data[2] = 
+
+            data[3] = 
+            data[4] = 
+            data[5] = 
+
+            data[6] = 
+            data[7] = 
+            data[8] = 
+
+            return new Matrix(3, 3, data);
+        }
+        public static Matrix RotationMatrixZXY(double alpha, double beta, double gamma)
+        {
+            double[] data = new double[9];
+
+            var cx = System.Math.Cos(alpha);
+            var sx = System.Math.Sin(alpha);
+            var cy = System.Math.Cos(beta);
+            var sy = System.Math.Sin(beta);
+            var cz = System.Math.Cos(gamma);
+            var sz = System.Math.Sin(gamma);
+
+            data[0] = 
+            data[1] = 
+            data[2] = 
+
+            data[3] = 
+            data[4] = 
+            data[5] = 
+
+            data[6] = 
+            data[7] = 
+            data[8] = 
+
+            return new Matrix(3, 3, data);
+        }
+
         public Matrix Transposed()
         {
             double[] array = new double[Data.Length];
@@ -178,6 +455,7 @@ namespace Tools.Math
             return new Matrix(Rows-1, Columns-1, array);
         }
 
+        //TODO finish determinant for size > 3
         public double Det()
         {
             if (Rows != Columns || Rows < 2) return double.NaN;
@@ -216,7 +494,6 @@ namespace Tools.Math
 
             return det;
         }
-
 
         public static Matrix operator +(Matrix A, Matrix B)
         {
@@ -290,20 +567,22 @@ namespace Tools.Math
             return new Matrix(B.Rows, B.Columns, array);
         }
 
-        //TODO Matrix multiplication
         public static Matrix operator *(Matrix A, Matrix B)
         {
-            if (A.Rows != B.Rows || A.Columns != B.Columns) return null;
+            if (A.Columns != B.Rows) return null;
 
-            double[] array = new double[A.Rows * A.Columns];
+            double[] array = new double[A.Rows * B.Columns];
 
             Parallel.For(0, array.Length, (n) =>
             {
-                int row = n / A.Columns;
-                int col = n % A.Columns;
+                int row = n / B.Columns;
+                int col = n % B.Columns;
 
+                double value = 0;
+                for (int i = 0; i < A.Columns; i++)
+                    value += A.Data[row * A.Columns + i] * B.Data[i * B.Columns + col];
 
-                array[n] = A.Data[n] * B.Data[n];
+                array[n] = value;
             });
 
             return new Matrix(A.Rows, A.Columns, array);
@@ -331,8 +610,87 @@ namespace Tools.Math
             return new Matrix(B.Rows, B.Columns, array);
         }
 
+        public static Vector3D operator *(Matrix A, Vector3D V)
+        {
+            if (A.Columns != A.Rows || A.Columns != 3) return null;
 
+            double[] array = new double[3];
 
+            Parallel.For(0, A.Data.Length, (n) =>
+            {
+                int row = n / A.Columns;
+                int col = n % A.Columns;
+
+                double value = 0;
+                for (int i = 0; i < 3; i++)
+                    value += A.Data[row * A.Columns + i] * V.Data[i];
+
+                array[row] = value;
+            });
+
+            return new Vector3D(array);
+        }
+        public static Vector3D operator *(Vector3D V, Matrix A)
+        {
+            if (A.Columns != A.Rows || A.Columns != 3) return null;
+
+            double[] array = new double[3];
+
+            Parallel.For(0, A.Data.Length, (n) =>
+            {
+                int row = n / A.Columns;
+                int col = n % A.Columns;
+
+                double value = 0;
+                for (int i = 0; i < 3; i++)
+                    value += A.Data[row * A.Columns + i] * V.Data[i];
+
+                array[row] = value;
+            });
+
+            return new Vector3D(array);
+        }
+
+        public static Vector2D operator *(Matrix A, Vector2D V)
+        {
+            if (A.Columns != A.Rows || A.Columns != 2) return null;
+
+            double[] array = new double[3];
+
+            Parallel.For(0, A.Data.Length, (n) =>
+            {
+                int row = n / A.Columns;
+                int col = n % A.Columns;
+
+                double value = 0;
+                for (int i = 0; i < 3; i++)
+                    value += A.Data[row * A.Columns + i] * V.Data[i];
+
+                array[row] = value;
+            });
+
+            return new Vector2D(array);
+        }
+        public static Vector2D operator *(Vector2D V, Matrix A)
+        {
+            if (A.Columns != A.Rows || A.Columns != 2) return null;
+
+            double[] array = new double[2];
+
+            Parallel.For(0, A.Data.Length, (n) =>
+            {
+                int row = n / A.Columns;
+                int col = n % A.Columns;
+
+                double value = 0;
+                for (int i = 0; i < 2; i++)
+                    value += A.Data[row * A.Columns + i] * V.Data[i];
+
+                array[row] = value;
+            });
+
+            return new Vector2D(array);
+        }
 
         public override string ToString()
         {
@@ -343,7 +701,23 @@ namespace Tools.Math
                 matrix += "|\t";
 
                 for (int x = 0; x < Columns; x++)
-                    matrix += $"{Data[y * Columns + x]}\t";
+                    matrix += Data[y * Columns + x].ToString("E3") + "\t";
+
+                matrix += "|\n";
+            }
+
+            return matrix;
+        }
+        public string ToString(string format = "E3")
+        {
+            string matrix = string.Empty;
+
+            for (int y = 0; y < Rows; y++)
+            {
+                matrix += "|\t";
+
+                for (int x = 0; x < Columns; x++)
+                    matrix += Data[y * Columns + x].ToString(format) + "\t";
 
                 matrix += "|\n";
             }

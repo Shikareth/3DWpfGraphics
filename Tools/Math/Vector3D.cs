@@ -11,6 +11,13 @@ namespace Tools.Math
         public double X { get; set; } = 0;
         public double Y { get; set; } = 0;
         public double Z { get; set; } = 0;
+        public double[] Data
+        {
+            get {
+                return new double[3] { X, Y, Z };
+            }
+        }
+
 
         public double Length
         {
@@ -113,6 +120,16 @@ namespace Tools.Math
         public static Vector3D operator ~(Vector3D v)
         {
             return new Vector3D(-v.X, -v.Y, -v.Z);
+        }
+
+
+        public override string ToString()
+        {
+            return $"|\t{X.ToString("E3")}\t{Y.ToString("E3")}\t{Z.ToString("E3")}\t|";
+        }
+        public string ToString(string format = "E3")
+        {
+            return $"|\t{X.ToString(format)}\t{Y.ToString(format)}\t{Z.ToString(format)}\t|";
         }
     }
 
