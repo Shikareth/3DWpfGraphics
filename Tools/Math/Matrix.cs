@@ -8,9 +8,9 @@ namespace Tools.Math
 {
     public class Matrix
     {
-        public double[] Data { get; set; }
-        public int Rows { get; set; }
-        public int Columns { get; set; }
+        public double[] Data { get; private set; }
+        public int Rows { get; private set; }
+        public int Columns { get; private set; }
 
         public Matrix(int rows, int columns, double value)
         {
@@ -67,22 +67,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(az);
             var sz = System.Math.Sin(az);
 
+            Data[0] = cy * cz;
+            Data[1] = -cy * sz;
+            Data[2] = sy;
 
-            //Data[0] = cy * cz;
-            //Data[1] = -cx * sz + sx * sy * cz;
-            //Data[2] = 
+            Data[3] = cx * sz + cz * sx * sy;
+            Data[4] = cx * cz - sx * sy * sz;
+            Data[5] = -cy * sx;
 
-            //Data[3] = iy.X;
-            //Data[4] = iy.Y;
-            //Data[5] = iy.Z;
-
-            //Data[6] = iz.X;
-            //Data[7] = iz.Y;
-            //Data[8] = iz.Z;
-
-
-
-
+            Data[6] = sx * sz - cx * cz * sy;
+            Data[7] = cz * sx + cx * sy * sz;
+            Data[8] = cx * cy;
         }
 
         public Matrix(Vector3D ix, Vector3D iy)
@@ -140,8 +135,8 @@ namespace Tools.Math
             double[] array = new double[Data.Length];
             Parallel.For(0, Data.Length, (n) =>
             {
-                int row = (int)System.Math.Floor(((double)(n / Columns)));
-                int col =  n % Columns;
+                int row = n / Columns;
+                int col = n % Columns;
 
                 array[n] = Data[col * Rows + row];
             });
@@ -153,7 +148,7 @@ namespace Tools.Math
             double[] array = new double[Data.Length];
             Parallel.For(0, Data.Length, (n) =>
             {
-                int row = (int)System.Math.Floor(((double)(n / Columns)));
+                int row = n / Columns;
                 int col = n % Columns;
 
                 array[n] = Data[col * Rows + row];
@@ -185,17 +180,175 @@ namespace Tools.Math
 
         public double Det()
         {
+            if (Rows != Columns || Rows < 2) return double.NaN;
+            int size = Columns;
 
-            Parallel.For(0, Columns, (n) =>
+            double det = 0;
+
+            switch (size)
             {
-                int r = n / Columns;
-                int c = n % Columns;
+                case 2:
+                    det = Data[0] * Data[3] - Data[1] * Data[2];
+                    break;
 
+                case 3:
+                    det = Data[0] * Data[4] * Data[8] +
+                        Data[1] * Data[5] * Data[6] +
+                        Data[2] * Data[3] * Data[7] -
+                        Data[6] * Data[4] * Data[2] -
+                        Data[7] * Data[5] * Data[0] -
+                        Data[8] * Data[3] * Data[1];
+                    break;
+                default:
+                    Parallel.For(0, Columns, (n) =>
+                    {
+                        int r = n / Columns;
+                        int c = n % Columns;
+
+
+
+
+
+                    });
+                    det = double.NaN;
+                    break;
+            }
+
+            return det;
+        }
+
+
+        public static Matrix operator +(Matrix A, Matrix B)
+        {
+            if (A.Rows != B.Rows || A.Columns != B.Columns) return null;
+
+            double[] array = new double[A.Rows * A.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A.Data[n] + B.Data[n];
             });
 
+            return new Matrix(A.Rows, A.Columns, array);
+        }
+        public static Matrix operator +(Matrix A, double B)
+        {
+            double[] array = new double[A.Rows * A.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A.Data[n] + B;
+            });
+
+            return new Matrix(A.Rows, A.Columns, array);
+        }
+        public static Matrix operator +(double A, Matrix B)
+        {
+            double[] array = new double[B.Rows * B.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A + B.Data[n];
+            });
+
+            return new Matrix(B.Rows, B.Columns, array);
+        }
+
+        public static Matrix operator -(Matrix A, Matrix B)
+        {
+            if (A.Rows != B.Rows || A.Columns != B.Columns) return null;
+
+            double[] array = new double[A.Rows * A.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A.Data[n] - B.Data[n];
+            });
+
+            return new Matrix(A.Rows, A.Columns, array);
+        }
+        public static Matrix operator -(Matrix A, double B)
+        {
+            double[] array = new double[A.Rows * A.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A.Data[n] - B;
+            });
+
+            return new Matrix(A.Rows, A.Columns, array);
+        }
+        public static Matrix operator -(double A, Matrix B)
+        {
+            double[] array = new double[B.Rows * B.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A - B.Data[n];
+            });
+
+            return new Matrix(B.Rows, B.Columns, array);
+        }
+
+        //TODO Matrix multiplication
+        public static Matrix operator *(Matrix A, Matrix B)
+        {
+            if (A.Rows != B.Rows || A.Columns != B.Columns) return null;
+
+            double[] array = new double[A.Rows * A.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                int row = n / A.Columns;
+                int col = n % A.Columns;
 
 
-            return 0;
+                array[n] = A.Data[n] * B.Data[n];
+            });
+
+            return new Matrix(A.Rows, A.Columns, array);
+        }
+        public static Matrix operator *(Matrix A, double B)
+        {
+            double[] array = new double[A.Rows * A.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A.Data[n] * B;
+            });
+
+            return new Matrix(A.Rows, A.Columns, array);
+        }
+        public static Matrix operator *(double A, Matrix B)
+        {
+            double[] array = new double[B.Rows * B.Columns];
+
+            Parallel.For(0, array.Length, (n) =>
+            {
+                array[n] = A * B.Data[n];
+            });
+
+            return new Matrix(B.Rows, B.Columns, array);
+        }
+
+
+
+
+        public override string ToString()
+        {
+            string matrix = string.Empty;
+
+            for (int y = 0; y < Rows; y++)
+            {
+                matrix += "|\t";
+
+                for (int x = 0; x < Columns; x++)
+                    matrix += $"{Data[y * Columns + x]}\t";
+
+                matrix += "|\n";
+            }
+
+            return matrix;
         }
 
     }
