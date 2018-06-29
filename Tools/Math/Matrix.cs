@@ -205,7 +205,6 @@ namespace Tools.Math
 
             return new Matrix(3, 3, data);
         }
-        //TODO Rest of rotation matrices
         public static Matrix RotationMatrixYXY(double alpha, double beta, double gamma)
         {
             double[] data = new double[9];
@@ -267,17 +266,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(gamma);
             var sz = System.Math.Sin(gamma);
 
-            data[0] = 
-            data[1] = 
-            data[2] = 
+            data[0] = cx * cy * cz - sx * sz;
+            data[1] = -cx * sy;
+            data[2] = cz * sx + cx * cy * sz;
 
-            data[3] = 
-            data[4] = 
-            data[5] = 
+            data[3] = cz * sy;
+            data[4] = cy;
+            data[5] = sy * sz;
 
-            data[6] = 
-            data[7] = 
-            data[8] = 
+            data[6] = -cx * sz - cy * cz * sx;
+            data[7] = sx * sy;
+            data[8] = cx * cz - cy * sx * sz;
 
             return new Matrix(3, 3, data);
         }
@@ -292,17 +291,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(gamma);
             var sz = System.Math.Sin(gamma);
 
-            data[0] = 
-            data[1] = 
-            data[2] = 
+            data[0] = cx * cy;
+            data[1] = sx * sz - cx * cz * sy;
+            data[2] = cz * sx + cx * sy * sz;
 
-            data[3] = 
-            data[4] = 
-            data[5] = 
+            data[3] = sy;
+            data[4] = cy * cz;
+            data[5] = -cy * sz;
 
-            data[6] = 
-            data[7] = 
-            data[8] = 
+            data[6] = -cy * sx;
+            data[7] = cx * sz + cz * sx * sy;
+            data[8] = cx * cz - sx * sy * sz;
 
             return new Matrix(3, 3, data);
         }
@@ -317,17 +316,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(gamma);
             var sz = System.Math.Sin(gamma);
 
-            data[0] = 
-            data[1] = 
-            data[2] = 
+            data[0] = cx * cy * cz - sx * sz;
+            data[1] = -cz * sx - cx * cy * sz;
+            data[2] = cx * cy;
 
-            data[3] = 
-            data[4] = 
-            data[5] = 
+            data[3] = cx * sz + cy * cz * sx;
+            data[4] = cx * cz - cy * cz * sx;
+            data[5] = sx * sy;
 
-            data[6] = 
-            data[7] = 
-            data[8] = 
+            data[6] = -cz * sy;
+            data[7] = sy * sz;
+            data[8] = cy;
 
             return new Matrix(3, 3, data);
         }
@@ -342,17 +341,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(gamma);
             var sz = System.Math.Sin(gamma);
 
-            data[0] = 
-            data[1] = 
-            data[2] = 
+            data[0] = cx * cy;
+            data[1] = cx * sy * sz - cz * sx;
+            data[2] = sx * sy + cx * cz * sy;
 
-            data[3] = 
-            data[4] = 
-            data[5] = 
+            data[3] = cy * sx;
+            data[4] = cx * cz + sx * sy * sz;
+            data[5] = cz * sx * sy - cx * sz;
 
-            data[6] = 
-            data[7] = 
-            data[8] = 
+            data[6] = -sy;
+            data[7] = cy * sz;
+            data[8] = cy * cz;
 
             return new Matrix(3, 3, data);
         }
@@ -367,17 +366,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(gamma);
             var sz = System.Math.Sin(gamma);
 
-            data[0] = 
-            data[1] = 
-            data[2] = 
+            data[0] = cx * cz - cy * sx * sz;
+            data[1] = -cx * sz - cy * cz * sx;
+            data[2] = sx * sy;
 
-            data[3] = 
-            data[4] = 
-            data[5] = 
+            data[3] = cz * sx + cx * cy * sz;
+            data[4] = cx * cy * cz - sx * sz;
+            data[5] = -cx * sy;
 
-            data[6] = 
-            data[7] = 
-            data[8] = 
+            data[6] = sy * sz;
+            data[7] = cz * sy;
+            data[8] = cy;
 
             return new Matrix(3, 3, data);
         }
@@ -392,17 +391,17 @@ namespace Tools.Math
             var cz = System.Math.Cos(gamma);
             var sz = System.Math.Sin(gamma);
 
-            data[0] = 
-            data[1] = 
-            data[2] = 
+            data[0] = cx * cz - sx * sy * sz;
+            data[1] = -cy * sx;
+            data[2] = cx * sz + cz * sx * sy;
 
-            data[3] = 
-            data[4] = 
-            data[5] = 
+            data[3] = cz * sx + cx * sy * sz;
+            data[4] = cx * cy;
+            data[5] = sx * sz - cx * cz * sy;
 
-            data[6] = 
-            data[7] = 
-            data[8] = 
+            data[6] = -cy * sz;
+            data[7] = sy;
+            data[8] = cy * cz;
 
             return new Matrix(3, 3, data);
         }
@@ -495,6 +494,51 @@ namespace Tools.Math
             return det;
         }
 
+        //TODO check if correct
+        public Matrix[] LU_Doolittle()
+        {
+            if (Rows != Columns) return null;
+
+            double[] L = new double[Data.Length];
+            double[] U = new double[Data.Length];
+
+
+            for (int i = 0; i < Columns; i++)
+            {
+
+                // Upper triangular
+                for (int k = 0; k < Columns; k++)
+                {
+                    // SUM{ L(i, j) * U(j, k) }
+                    double sum = 0;
+                    for (int j = 0; j < i; j++)
+                        sum += L[i * Columns + j] * U[j * Columns + k];
+
+                    // U(i, k) =
+                    U[i * Columns + k] = Data[i * Columns + k] - sum;
+                }
+
+                // Lower triangular
+                for (int k = 0; k < Columns; k++)
+                {
+                    if (i == k)
+                        L[i*Columns + i] = 1;
+                    else
+                    {
+                        // SUM{ L(k, j) * U(j, i) }
+                        double sum = 0;
+                        for (int j = 0; j < i; j++)
+                            sum += L[k * Columns + j] * U[j * Columns + i];
+
+                        // L(k, i) =
+                        U[k * Columns + i] = (Data[k * Columns + i] - sum) / U[i * Columns + i];
+                    }
+                }
+            }
+
+            return new Matrix[2] { new Matrix(Columns, Columns, L), new Matrix(Columns, Columns, U) };
+        }
+        
         public static Matrix operator +(Matrix A, Matrix B)
         {
             if (A.Rows != B.Rows || A.Columns != B.Columns) return null;
@@ -701,7 +745,7 @@ namespace Tools.Math
                 matrix += "|\t";
 
                 for (int x = 0; x < Columns; x++)
-                    matrix += Data[y * Columns + x].ToString("E3") + "\t";
+                    matrix += Data[y * Columns + x].ToString("N3") + "\t";
 
                 matrix += "|\n";
             }

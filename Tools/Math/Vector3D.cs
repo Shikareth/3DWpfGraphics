@@ -125,7 +125,7 @@ namespace Tools.Math
 
         public override string ToString()
         {
-            return $"|\t{X.ToString("E3")}\t{Y.ToString("E3")}\t{Z.ToString("E3")}\t|";
+            return $"|\t{X.ToString("N3")}\t{Y.ToString("N3")}\t{Z.ToString("N3")}\t|";
         }
         public string ToString(string format = "E3")
         {

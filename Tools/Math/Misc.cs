@@ -52,5 +52,9 @@ namespace Tools.Math
             return 180 * value / System.Math.PI;
         }
 
+        public static double Map(double From_min, double From_max, double To_min, double To_max, double value)
+        {
+            return To_min + ((To_max - To_min) / (From_max - From_min)) * (value - From_min);
+        }
     }
 }

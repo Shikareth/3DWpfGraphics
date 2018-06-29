@@ -8,21 +8,22 @@ using System.Windows.Data;
 
 namespace _3DVisualization.Converters
 {
-    [ValueConversion(typeof(Tools.Math.Vector3D), typeof(System.Windows.Media.Media3D.Point3D))]
-    public class Vector3DToPoint3D : IValueConverter
+    public class ActuatorLengthToColor : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            System.Windows.Media.Media3D.Point3D result = new System.Windows.Media.Media3D.Point3D();
+            System.Windows.Media.SolidColorBrush color = System.Windows.Media.Brushes.LawnGreen;
 
             if(value != null)
-                if(value.GetType() == typeof(Tools.Math.Vector3D))
+                if(value.GetType() == typeof(Models.Actuator))
                 {
-                    var v = (Tools.Math.Vector3D)value;
-                    result = new System.Windows.Media.Media3D.Point3D(v.X, v.Y, v.Z);
+                    Models.Actuator A = (Models.Actuator)value;
+
+                    if (A.ActualLength >= A.MaxLength) color = System.Windows.Media.Brushes.Red;
+                    if (A.ActualLength <= A.MinLength) color = System.Windows.Media.Brushes.Blue;
                 }
 
-            return result;
+            return color;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

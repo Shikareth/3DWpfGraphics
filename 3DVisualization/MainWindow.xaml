@@ -10,57 +10,175 @@
         Title="MainWindow" Height="450" Width="800"
         Initialized="Window_Initialized">
     <Grid>
-        <hx:HelixViewport3D x:Name="HelixViewport" ZoomExtentsWhenLoaded="True" Background="Black" MouseDoubleClick="HelixViewport_MouseDoubleClick">
+        <hx:HelixViewport3D x:Name="HelixViewport" ZoomExtentsWhenLoaded="True" Background="Black" 
+                            MouseDoubleClick="HelixViewport_MouseDoubleClick"
+                            KeyDown="HelixViewport_KeyDown">
             <hx:SunLight/>
             <hx:RectangleVisual3D Fill="Gray" Width="3" Length="3" Origin="0,0,0" Normal="0,0,1"/>
 
+            <!-- ################################################## BasePlatform ################################################## -->
             <hx:EllipsoidVisual3D RadiusZ="0.001" Fill="LightSlateGray"
                                   RadiusX="{Binding Path=Model.BasePlatform.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                   RadiusY="{Binding Path=Model.BasePlatform.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <hx:EllipsoidVisual3D.Transform>
-                    <TranslateTransform3D OffsetX="{Binding Path=Model.BasePlatform.Origin.x, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                          OffsetY="{Binding Path=Model.BasePlatform.Origin.y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                          OffsetZ="{Binding Path=Model.BasePlatform.Origin.z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TranslateTransform3D OffsetX="{Binding Path=Model.BasePlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          OffsetY="{Binding Path=Model.BasePlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          OffsetZ="{Binding Path=Model.BasePlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </hx:EllipsoidVisual3D.Transform>
             </hx:EllipsoidVisual3D>
 
-            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" Fill="Yellow"
-                             Point1="{Binding Path=Model.BasePlatform.Joints[0], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
-                             Point2="{Binding Path=Model.WorkPlatform.Joints[0], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
-            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" Fill="Yellow"
-                             Point1="{Binding Path=Model.BasePlatform.Joints[1], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
-                             Point2="{Binding Path=Model.WorkPlatform.Joints[1], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
-            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" Fill="Yellow"
-                             Point1="{Binding Path=Model.BasePlatform.Joints[2], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
-                             Point2="{Binding Path=Model.WorkPlatform.Joints[2], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
-            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" Fill="Yellow"
-                             Point1="{Binding Path=Model.BasePlatform.Joints[3], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
-                             Point2="{Binding Path=Model.WorkPlatform.Joints[3], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
-            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" Fill="Yellow"
-                             Point1="{Binding Path=Model.BasePlatform.Joints[4], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
-                             Point2="{Binding Path=Model.WorkPlatform.Joints[4], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
-            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" Fill="Yellow"
-                             Point1="{Binding Path=Model.BasePlatform.Joints[5], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
-                             Point2="{Binding Path=Model.WorkPlatform.Joints[5], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" 
+                             Fill="{Binding Path=Model.Actuators[0], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActuatorLengthToColorConverter}}"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[0], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
+                             Point2="{Binding Path=Model.WorkPlatform.RealJoints[0], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.05" InnerDiameter="0" Fill="Brown"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[0], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:PipeVisual3D.Point2>
+                    <MultiBinding Converter="{StaticResource ResourceKey=Vector3DExtendMultiConverter}">
+                        <Binding Path="Model.BasePlatform.RealJoints[0]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.WorkPlatform.RealJoints[0]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.Actuators[0].MinLength" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                    </MultiBinding>
+                </hx:PipeVisual3D.Point2>
+            </hx:PipeVisual3D>
+            
+            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" 
+                             Fill="{Binding Path=Model.Actuators[1], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActuatorLengthToColorConverter}}"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[1], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
+                             Point2="{Binding Path=Model.WorkPlatform.RealJoints[1], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.05" InnerDiameter="0" Fill="Brown"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[1], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:PipeVisual3D.Point2>
+                    <MultiBinding Converter="{StaticResource ResourceKey=Vector3DExtendMultiConverter}">
+                        <Binding Path="Model.BasePlatform.RealJoints[1]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.WorkPlatform.RealJoints[1]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.Actuators[1].MinLength" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                    </MultiBinding>
+                </hx:PipeVisual3D.Point2>
+            </hx:PipeVisual3D>
+            
+            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" 
+                             Fill="{Binding Path=Model.Actuators[2], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActuatorLengthToColorConverter}}"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[2], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
+                             Point2="{Binding Path=Model.WorkPlatform.RealJoints[2], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.05" InnerDiameter="0" Fill="Brown"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[2], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:PipeVisual3D.Point2>
+                    <MultiBinding Converter="{StaticResource ResourceKey=Vector3DExtendMultiConverter}">
+                        <Binding Path="Model.BasePlatform.RealJoints[2]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.WorkPlatform.RealJoints[2]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.Actuators[2].MinLength" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                    </MultiBinding>
+                </hx:PipeVisual3D.Point2>
+            </hx:PipeVisual3D>
 
-            <hx:EllipsoidVisual3D RadiusZ="0.001" Fill="LightSteelBlue"
+            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" 
+                             Fill="{Binding Path=Model.Actuators[3], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActuatorLengthToColorConverter}}"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[3], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
+                             Point2="{Binding Path=Model.WorkPlatform.RealJoints[3], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.05" InnerDiameter="0" Fill="Brown"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[3], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:PipeVisual3D.Point2>
+                    <MultiBinding Converter="{StaticResource ResourceKey=Vector3DExtendMultiConverter}">
+                        <Binding Path="Model.BasePlatform.RealJoints[3]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.WorkPlatform.RealJoints[3]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.Actuators[3].MinLength" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                    </MultiBinding>
+                </hx:PipeVisual3D.Point2>
+            </hx:PipeVisual3D>
+            
+            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" 
+                             Fill="{Binding Path=Model.Actuators[4], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActuatorLengthToColorConverter}}"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[4], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
+                             Point2="{Binding Path=Model.WorkPlatform.RealJoints[4], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.05" InnerDiameter="0" Fill="Brown"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[4], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:PipeVisual3D.Point2>
+                    <MultiBinding Converter="{StaticResource ResourceKey=Vector3DExtendMultiConverter}">
+                        <Binding Path="Model.BasePlatform.RealJoints[4]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.WorkPlatform.RealJoints[4]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.Actuators[4].MinLength" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                    </MultiBinding>
+                </hx:PipeVisual3D.Point2>
+            </hx:PipeVisual3D>
+            
+            <hx:PipeVisual3D Diameter="0.025" InnerDiameter="0" 
+                             Fill="{Binding Path=Model.Actuators[5], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActuatorLengthToColorConverter}}"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[5], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}" 
+                             Point2="{Binding Path=Model.WorkPlatform.RealJoints[5], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}"/>
+            <hx:PipeVisual3D Diameter="0.05" InnerDiameter="0" Fill="Brown"
+                             Point1="{Binding Path=Model.BasePlatform.RealJoints[5], Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:PipeVisual3D.Point2>
+                    <MultiBinding Converter="{StaticResource ResourceKey=Vector3DExtendMultiConverter}">
+                        <Binding Path="Model.BasePlatform.RealJoints[5]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.WorkPlatform.RealJoints[5]" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="Model.Actuators[5].MinLength" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                    </MultiBinding>
+                </hx:PipeVisual3D.Point2>
+            </hx:PipeVisual3D>
+
+
+            <!-- ################################################## WorkPlatform ################################################## -->
+            <!-- TODO Change ellipse to custom model -->
+            <hx:EllipsoidVisual3D RadiusZ="0.001" Fill="DarkOrchid"
                                   RadiusX="{Binding Path=Model.WorkPlatform.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                   RadiusY="{Binding Path=Model.WorkPlatform.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <hx:EllipsoidVisual3D.Transform>
                     <Transform3DGroup>
-                        <TranslateTransform3D OffsetX="{Binding Path=Model.WorkPlatform.Origin.x, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                              OffsetY="{Binding Path=Model.WorkPlatform.Origin.y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                              OffsetZ="{Binding Path=Model.WorkPlatform.Origin.z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <RotateTransform3D CenterX="{Binding Path=Model.WorkPlatform.Origin.x, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                           CenterY="{Binding Path=Model.WorkPlatform.Origin.y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                           CenterZ="{Binding Path=Model.WorkPlatform.Origin.z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <RotateTransform3D.Rotation>
-                                <AxisAngleRotation3D Axis="1,0,0" Angle="1"/> <!-- TODO WorkPlatform rotation binding-->
-                            </RotateTransform3D.Rotation>
-                        </RotateTransform3D>
+                        <TranslateTransform3D OffsetX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Transform3DGroup>
                 </hx:EllipsoidVisual3D.Transform>
             </hx:EllipsoidVisual3D>
+
+            <hx:ArrowVisual3D Fill="Red" Diameter="0.01" 
+                              Point1="0,0,0"
+                              Point2="{Binding Path=Model.WorkPlatform.X_Axis, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:ArrowVisual3D.Transform>
+                    <Transform3DGroup>
+                        <TranslateTransform3D OffsetX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ScaleTransform3D CenterX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          CenterY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          CenterZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                          ScaleX="0.5" ScaleY="0.5" ScaleZ="0.5"/>
+                    </Transform3DGroup>
+                </hx:ArrowVisual3D.Transform>
+            </hx:ArrowVisual3D>
+            <hx:ArrowVisual3D Fill="Green" Diameter="0.01" 
+                              Point1="0,0,0"
+                              Point2="{Binding Path=Model.WorkPlatform.Y_Axis, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:ArrowVisual3D.Transform>
+                    <Transform3DGroup>
+                        <TranslateTransform3D OffsetX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ScaleTransform3D CenterX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          CenterY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          CenterZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                          ScaleX="0.5" ScaleY="0.5" ScaleZ="0.5"/>
+                    </Transform3DGroup>
+                </hx:ArrowVisual3D.Transform>
+            </hx:ArrowVisual3D>
+            <hx:ArrowVisual3D Fill="Blue" Diameter="0.01" 
+                              Point1="0,0,0"
+                              Point2="{Binding Path=Model.WorkPlatform.Normal, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Vector3DToPoint3DConverter}}">
+                <hx:ArrowVisual3D.Transform>
+                    <Transform3DGroup>
+                        <TranslateTransform3D OffsetX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                              OffsetZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ScaleTransform3D CenterX="{Binding Path=Model.WorkPlatform.Origin.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          CenterY="{Binding Path=Model.WorkPlatform.Origin.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          CenterZ="{Binding Path=Model.WorkPlatform.Origin.Z, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                          ScaleX="0.5" ScaleY="0.5" ScaleZ="0.5"/>
+                    </Transform3DGroup>
+                </hx:ArrowVisual3D.Transform>
+            </hx:ArrowVisual3D>
+
+            
         </hx:HelixViewport3D>
     </Grid>
 </Window>

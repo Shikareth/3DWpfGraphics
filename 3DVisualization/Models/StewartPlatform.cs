@@ -1,142 +1,152 @@
-﻿using Optinav.Mathlib;
+﻿using Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tools.Math;
 
 namespace _3DVisualization.Models
 {
     public class StewartPlatform
     {
-        #region Constraints
-
-
-
-        #endregion
-
         public Platform BasePlatform { get; set; } = new Platform();
         public Platform WorkPlatform { get; set; } = new Platform();
+        public Actuator[] Actuators { get; set; } = new Actuator[6];
 
-        public Actuator A1 { get; set; }
-        public Actuator A2 { get; set; }
-        public Actuator A3 { get; set; }
-        public Actuator A4 { get; set; }
-        public Actuator A5 { get; set; }
-        public Actuator A6 { get; set; }
-
-        public StewartPlatform()
+        public StewartPlatform(double ActuatorMinLength, double ActuatorMaxLength)
         {
+            for (int n = 0; n < Actuators.Length; n++)
+            {
+                Actuators[n] = new Actuator()
+                {
+                    MinLength = ActuatorMinLength,
+                    MaxLength = ActuatorMaxLength,
+                    ActualLength = ActuatorMinLength
+                };
+            }
+            UpdateActuators();
+        }
 
+        public void Move(Vector3D t)
+        {
+            WorkPlatform.Origin += t;
+            UpdateActuators();
+        }
+        public void Move(Vector3D t, Matrix R)
+        {
+            WorkPlatform.Origin = R * WorkPlatform.Origin + t;
+            WorkPlatform.X_Axis *= R;
+            WorkPlatform.Normal *= R;
+            UpdateActuators();
+        }
+        public void Rotate(Matrix R)
+        {
+            WorkPlatform.Origin *= R;
+            WorkPlatform.X_Axis *= R;
+            WorkPlatform.Normal *= R;
+            UpdateActuators();
+        }
+
+        private void UpdateActuators()
+        {
+            for (int n = 0; n < Actuators.Length; n++)
+                Actuators[n].ActualLength = (WorkPlatform.RealJoints[n] - BasePlatform.RealJoints[n]).Length;
         }
     }
 
     public class Actuator
     {
-        public double MaxLength { get; set; } = 1;
-        public double MinLength { get; set; } = 0.5;
-        public double ActualLength { get; set; }
+        public double MaxLength { get; set; } = 2;
+        public double MinLength { get; set; } = 1;
+        public double ActualLength { get; set;}
     }
 
     public class Platform
     {
-        public double Radius { get; set; } = 1.5;
+        public double Radius
+        {
+            get { return radius; }
+            set { radius = value; InitJoints(angleOffset); }
+        }
+        private double radius = 1.5;
 
-        public Vector3D Origin { get; set; } = new Vector3D(0, 0, 0);
-        public Vector3D Rotation { get; set; } = new Vector3D(1, 0, 0);
-        public Vector3D Normal { get; set; } = new Vector3D(0, 0, 1);
+        private double angleOffset = 0;
 
-        //TODO add platform rotation axis and rotation angle property
+        public Vector3D Origin
+        {
+            get { return origin; }
+            set { origin = value; InitRealJoints(); }
+        }
+        private Vector3D origin = new Vector3D(0, 0, 0);
+
+        public Vector3D X_Axis
+        {
+            get { return x_axis; }
+            set { x_axis = value; InitRealJoints(); }
+        }
+        private Vector3D x_axis = new Vector3D(1, 0, 0);
+
+        public Vector3D Y_Axis
+        {
+            get { return Vector3D.CrossProduct(Normal, X_Axis); }
+        }
+
+        public Vector3D Normal
+        {
+            get { return normal; }
+            set { normal = value; InitRealJoints(); }
+        }
+        private Vector3D normal = new Vector3D(0, 0, 1);
+
+        //TODO add platform rotation axis and rotation angle property OR make converter [Rotation Matrix] -> [Axis, angle]
 
         public Vector3D[] Joints { get; set; } = new Vector3D[6];
+        public Vector3D[] RealJoints { get; set; } = new Vector3D[6];
 
-        private Vector3D[] realJoints = new Vector3D[6];
-        public Vector3D[] RealJoints
+        /// <summary>
+        /// Initializes platform. Positions of the joints are based on circle radius splitted into 120 degrees parts. 
+        /// Then joints are evenly moved from radius end point in polar coordinates system starting in circle center over "p" degrees clockwise and counterclockwise.
+        /// </summary>
+        /// <param name="p">Radial offsed in degrees</param>
+        public Platform(double p = 0)
         {
-            get {
-                CalculateRealJoints();
-                return realJoints;
-            }
-        } 
-
-        public void InitJoints(double p = 0)
+            angleOffset = p;
+            InitJoints(p);
+        }
+        
+        public void InitJoints(double p)
         {
             for (int i = 0; i < 3; i++)
             {
                 Vector2D c;
 
-                c = Tools.PolarToCartesian(Radius, Tools.DegToRad(i * 120 + p));
+                c = Misc.PolarToCartesian(Radius, Misc.DegToRad(i * 120 + p));
 
-                Joints[i * 2] = new Vector3D(c.x, c.y, 0.0);
+                Joints[i * 2] = new Vector3D(c.X, c.Y, 0.0);
 
-                c = Tools.PolarToCartesian(Radius, Tools.DegToRad(i * 120 - p));
+                c = Misc.PolarToCartesian(Radius, Misc.DegToRad(i * 120 - p));
 
-                Joints[i * 2 + 1] = new Vector3D(c.x, c.y, 0.0);
+                Joints[i * 2 + 1] = new Vector3D(c.X, c.Y, 0.0);
             }
+
+            InitRealJoints();
         }
 
-        private void CalculateRealJoints()
+        private void InitRealJoints()
         {
-            for (int i = 0; i < 6; i++)
-            {
-                var ix = Rotation;
-                var iz = Normal;
-                var iy = iz.CrossProduct(ix);
+            var ix = X_Axis.Normalized();
+            var iz = Normal.Normalized();
+            var iy = Vector3D.CrossProduct(iz, ix).Normalized();
 
-                ix.Normalize();
-                iy.Normalize();
-                iz.Normalize();
+            Matrix R = new Matrix(ix, iy, iz);
 
+            Vector3D[] array = new Vector3D[Joints.Length];
 
-                realJoints[i] = Joints[i];
+            for (int n = 0; n < array.Length; n++)
+                array[n] = Joints[n] * R + Origin;
 
-            }
-        }
-    }
-
-    public static class Tools
-    {
-        public static Vector2D PolarToCartesian(Vector2D v)
-        {
-            return new Vector2D()
-            {
-                x = v.x * Math.Cos(v.y),
-                y = v.x * Math.Sin(v.y)
-            };
-        }
-        public static Vector2D PolarToCartesian(double R, double A)
-        {
-            return new Vector2D()
-            {
-                x = R * Math.Cos(A),
-                y = R * Math.Sin(A)
-            };
-        }
-
-        public static Vector2D CartesianToPolar(Vector2D v)
-        {
-            return new Vector2D()
-            {
-                x = Math.Sqrt(Math.Pow(v.x,2) + Math.Pow(v.y, 2)),
-                y = Math.Atan2(v.y, v.x)
-            };
-        }
-        public static Vector2D CartesianToPolar(double X, double Y)
-        {
-            return new Vector2D()
-            {
-                x = Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2)),
-                y = Math.Atan2(Y, X)
-            };
-        }
-
-        public static double DegToRad(double value)
-        {
-            return value / 180 * Math.PI;
-        }
-        public static double RadToDeg(double value)
-        {
-            return 180 * value / Math.PI;
+            RealJoints = array;
         }
 
     }

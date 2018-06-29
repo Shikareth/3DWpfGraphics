@@ -6,5 +6,7 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <cv:Vector3DToPoint3D x:Key="Vector3DToPoint3DConverter"/>
+        <cv:Vector3DExtend x:Key="Vector3DExtendMultiConverter"/>
+        <cv:ActuatorLengthToColor x:Key="ActuatorLengthToColorConverter"/>
     </Application.Resources>
 </Application>

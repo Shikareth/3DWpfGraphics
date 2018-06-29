@@ -33,13 +33,12 @@ namespace _3DVisualization
         private void Window_Initialized(object sender, EventArgs e)
         {
 
-            Model = new StewartPlatform();
+            Model = new StewartPlatform(0.5, 10);
             Model.BasePlatform.Radius = 1.5;
             Model.BasePlatform.InitJoints(10);
             Model.WorkPlatform.Radius = 1;
-            Model.WorkPlatform.Origin = new Optinav.Mathlib.Vector3D(0, 0, 2);
             Model.WorkPlatform.InitJoints(50);
-
+            Model.Move(new Tools.Math.Vector3D(0, 0, 1));
 
             OnPropertyChanged("Model");
         }
@@ -53,6 +52,50 @@ namespace _3DVisualization
         public void OnPropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
+        private void HelixViewport_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.NumPad8)
+            {
+                Model.Move(new Tools.Math.Vector3D(0.1, 0, 0));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad4)
+            {
+                Model.Move(new Tools.Math.Vector3D(0, -0.1, 0));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad6)
+            {
+                Model.Move(new Tools.Math.Vector3D(0, 0.1, 0));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad2)
+            {
+                Model.Move(new Tools.Math.Vector3D(-0.1, 0, 0));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad7)
+            {
+                Model.Move(new Tools.Math.Vector3D(0, 0, -0.1));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad9)
+            {
+                Model.Move(new Tools.Math.Vector3D(0, 0, 0.1));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad1)
+            {
+                Model.Rotate(Tools.Math.Matrix.RotationMatrixXYZ(0, 0, Tools.Math.Misc.DegToRad(5)));
+                OnPropertyChanged("Model");
+            }
+            if (e.Key == Key.NumPad3)
+            {
+                Model.Rotate(Tools.Math.Matrix.RotationMatrixXYZ(0, 0, Tools.Math.Misc.DegToRad(-5)));
+                OnPropertyChanged("Model");
+            }
         }
     }
 }
